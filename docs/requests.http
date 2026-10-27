@@ -1,0 +1,85 @@
+@baseUrl = http://localhost:5000/api
+@contentType = application/json
+@adminPassword = (value printed by `npm run seed`)
+
+### Health check
+GET http://localhost:5000/health
+
+### Register
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+  "name": "Test Customer",
+  "email": "customer@example.com",
+  "password": "Password123"
+}
+
+### Login (customer)
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "customer@example.com",
+  "password": "Password123"
+}
+
+### Login (admin)
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "ah59642@gmail.com",
+  "password": "{{adminPassword}}"
+}
+
+### Current user
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{accessToken}}
+
+### List products
+GET {{baseUrl}}/products?page=1&limit=12&sort=newest
+
+### Product detail
+GET {{baseUrl}}/products/hydrating-rose-cleanser
+
+### Category tree
+GET {{baseUrl}}/categories/tree
+
+### Homepage content
+GET {{baseUrl}}/content/homepage
+
+### Add to cart
+POST {{baseUrl}}/cart/items
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "productId": "REPLACE_WITH_PRODUCT_ID",
+  "quantity": 2
+}
+
+### Get cart
+GET {{baseUrl}}/cart
+Authorization: Bearer {{accessToken}}
+
+### Admin: dashboard stats
+GET {{baseUrl}}/admin/dashboard/stats
+Authorization: Bearer {{adminAccessToken}}
+
+### Admin: list products
+GET {{baseUrl}}/admin/products?page=1&limit=20
+Authorization: Bearer {{adminAccessToken}}
+
+
+### Forgot password - step 1: e-mail a reset code (same 200 answer for unknown e-mails)
+POST {{baseUrl}}/auth/forgot-password
+Content-Type: application/json
+
+{ "email": "customer@example.com" }
+
+### Forgot password - step 2: code + new password (does not sign in)
+POST {{baseUrl}}/auth/reset-password
+Content-Type: application/json
+
+{ "email": "customer@example.com", "code": "123456", "newPassword": "New-Passw0rd" }
