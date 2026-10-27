@@ -4,7 +4,7 @@ import { env } from './env';
 export const pool = new Pool({
   connectionString: env.DATABASE_URL,
   ssl: env.DB_SSL ? { rejectUnauthorized: env.DB_SSL_REJECT_UNAUTHORIZED } : undefined,
-  max: 20,
+  max: 3,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 5000,
   statement_timeout: 20000, // never let one runaway query hold a connection forever
@@ -29,9 +29,7 @@ export async function query<T extends QueryResultRow = QueryResultRow>(
  * Acquire a client and run a callback inside a transaction.
  * Automatically commits on success and rolls back on error.
  */
-export async function withTransaction<T>(
-  callback: (client: PoolClient) => Promise<T>
-): Promise<T> {
+export async function withTransaction<T>(callback: (client: PoolClient) => Promise<T>): Promise<T> {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
